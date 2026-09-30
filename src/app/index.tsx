@@ -1,10 +1,17 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Expense Tracker</Text>
 
         <View style={styles.summaryCard}>
@@ -12,7 +19,10 @@ export default function HomeScreen() {
           <Text style={styles.total}>$0.00</Text>
         </View>
 
-        <Pressable style={styles.addButton}>
+        <Pressable
+          style={styles.addButton}
+          onPress={() => router.push('/expense/add')}
+        >
           <Text style={styles.addButtonText}>+ Add Expense</Text>
         </Pressable>
 
@@ -23,7 +33,7 @@ export default function HomeScreen() {
             No expenses yet.
           </Text>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -34,8 +44,8 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
     padding: 24,
+    paddingBottom: 40,
   },
 
   title: {
@@ -76,16 +86,23 @@ const styles = StyleSheet.create({
   },
 
   expensesSection: {
-    flex: 1,
+    width: '100%',
+    marginTop: 8,
+    paddingBottom: 40,
   },
 
   sectionTitle: {
+    width: '100%',
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 16,
+    color: '#222222',
   },
 
   emptyMessage: {
+    width: '100%',
     fontSize: 16,
+    lineHeight: 24,
+    color: '#555555',
   },
 });
