@@ -9,12 +9,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Expense } from '@/types/expense';
+import { useExpenses } from '@/context/ExpenseContext';
 
 export default function AddExpenseScreen() {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const { addExpense } = useExpenses();
   const handleSave = () => {
     const expense: Expense = {
       id: Date.now().toString(),
@@ -25,6 +27,7 @@ export default function AddExpenseScreen() {
     };
 
     console.log('Expense created:', expense);
+    addExpense(expense);
   };
 
   return (
@@ -78,8 +81,13 @@ export default function AddExpenseScreen() {
           />
         </View>
 
-        <Pressable style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Save Expense</Text>
+        <Pressable
+          style={styles.saveButton}
+          onPress={handleSave}
+        >
+          <Text style={styles.saveButtonText}>
+            Save Expense
+          </Text>
         </Pressable>
 
         <View style={styles.debugContainer}>

@@ -7,8 +7,15 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useExpenses } from '@/context/ExpenseContext';
 
 export default function HomeScreen() {
+  const { expenses } = useExpenses();
+  const totalSpent = expenses.reduce(
+    (total, expense) => total + expense.amount,
+    0
+  );
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -16,7 +23,9 @@ export default function HomeScreen() {
 
         <View style={styles.summaryCard}>
           <Text style={styles.summaryLabel}>Total Spent</Text>
-          <Text style={styles.total}>$0.00</Text>
+          <Text style={styles.total}>
+            R${totalSpent.toFixed(2)}
+          </Text>
         </View>
 
         <Pressable
@@ -29,9 +38,29 @@ export default function HomeScreen() {
         <View style={styles.expensesSection}>
           <Text style={styles.sectionTitle}>Recent Expenses</Text>
 
-          <Text style={styles.emptyMessage}>
-            No expenses yet.
-          </Text>
+          {expenses.length === 0 ? (
+            <Text style={styles.emptyMessage}>
+              No expenses yet.
+            </Text>
+          ) : (
+            expenses.map((expense) => (
+              <View key={expense.id} style={styles.expenseItem}>
+                <View>
+                  <Text style={styles.expenseCategory}>
+                    {expense.category}
+                  </Text>
+
+                  <Text style={styles.expenseDescription}>
+                    {expense.description || 'No description'}
+                  </Text>
+                </View>
+
+                <Text style={styles.expenseAmount}>
+                  ${expense.amount.toFixed(2)}
+                </Text>
+              </View>
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -104,5 +133,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#555555',
+  },
+
+  expenseItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#dddddd',
+    borderRadius: 12,
+  },
+
+  expenseCategory: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#222222',
+  },
+
+  expenseDescription: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#666666',
+  },
+
+  expenseAmount: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#222222',
   },
 });
