@@ -8,12 +8,24 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Expense } from '@/types/expense';
 
 export default function AddExpenseScreen() {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const handleSave = () => {
+    const expense: Expense = {
+      id: Date.now().toString(),
+      amount: Number(amount),
+      category,
+      date,
+      description,
+    };
+
+    console.log('Expense created:', expense);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
