@@ -24,7 +24,7 @@ export default function HomeScreen() {
         <View style={styles.summaryCard}>
           <Text style={styles.summaryLabel}>Total Spent</Text>
           <Text style={styles.total}>
-            R${totalSpent.toFixed(2)}
+            R$ {totalSpent.toFixed(2)}
           </Text>
         </View>
 
@@ -56,7 +56,7 @@ export default function HomeScreen() {
                 </View>
 
                 <Text style={styles.expenseAmount}>
-                  ${expense.amount.toFixed(2)}
+                  R$ {expense.amount.toFixed(2)}
                 </Text>
               </View>
             ))

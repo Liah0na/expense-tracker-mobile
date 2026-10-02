@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { router } from 'expo-router';
 import {
   Pressable,
   ScrollView,
@@ -16,24 +17,56 @@ export default function AddExpenseScreen() {
   const [category, setCategory] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
   const { addExpense } = useExpenses();
   const handleSave = () => {
+    const numericAmount = Number(amount);
+
+    if (!amount.trim()) {
+      setError('Please enter an amount.');
+      return;
+    }
+
+    if (Number.isNaN(numericAmount) || numericAmount <= 0) {
+      setError('Amount must be greater than 0.');
+      return;
+    }
+
+    if (!category.trim()) {
+      setError('Please enter a category.');
+      return;
+    }
+
+    if (!date.trim()) {
+      setError('Please enter a date.');
+      return;
+    }
+
+    setError('');
+
     const expense: Expense = {
       id: Date.now().toString(),
-      amount: Number(amount),
-      category,
-      date,
-      description,
+      amount: numericAmount,
+      category: category.trim(),
+      date: date.trim(),
+      description: description.trim(),
     };
 
-    console.log('Expense created:', expense);
     addExpense(expense);
+
+    router.back();
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Add Expense</Text>
+
+        {error ? (
+          <Text style={styles.errorMessage}>
+            {error}
+          </Text>
+        ) : null}
 
         <View style={styles.formGroup}>
           <Text style={styles.label}>Amount</Text>
@@ -159,5 +192,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#eeeeee',
     borderRadius: 10,
     gap: 8,
+  },
+
+  errorMessage: {
+    color: '#cc0000',
+    fontSize: 15,
+    marginBottom: 16,
   },
 });
