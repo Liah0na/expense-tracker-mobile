@@ -12,6 +12,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Expense } from '@/types/expense';
 import { useExpenses } from '@/context/ExpenseContext';
 
+const categories = [
+  'Food',
+  'Transportation',
+  'Shopping',
+  'Bills',
+  'Entertainment',
+  'Health',
+  'Other',
+];
+
 export default function AddExpenseScreen() {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
@@ -33,7 +43,7 @@ export default function AddExpenseScreen() {
     }
 
     if (!category.trim()) {
-      setError('Please enter a category.');
+      setError('Please select a category.');
       return;
     }
 
@@ -83,12 +93,27 @@ export default function AddExpenseScreen() {
         <View style={styles.formGroup}>
           <Text style={styles.label}>Category</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Food"
-            value={category}
-            onChangeText={setCategory}
-          />
+          <View style={styles.categoryContainer}>
+            {categories.map((item) => (
+              <Pressable
+                key={item}
+                style={[
+                  styles.categoryButton,
+                  category === item && styles.categoryButtonSelected,
+                ]}
+                onPress={() => setCategory(item)}
+              >
+                <Text
+                  style={[
+                    styles.categoryButtonText,
+                    category === item && styles.categoryButtonTextSelected,
+                  ]}
+                >
+                  {item}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
 
         <View style={styles.formGroup}>
@@ -198,5 +223,34 @@ const styles = StyleSheet.create({
     color: '#cc0000',
     fontSize: 15,
     marginBottom: 16,
+  },
+
+  categoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+
+  categoryButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    borderRadius: 20,
+  },
+
+  categoryButtonSelected: {
+    backgroundColor: '#222222',
+    borderColor: '#222222',
+  },
+
+  categoryButtonText: {
+    fontSize: 15,
+    color: '#333333',
+  },
+
+  categoryButtonTextSelected: {
+    color: '#ffffff',
+    fontWeight: '600',
   },
 });
