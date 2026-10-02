@@ -18,6 +18,13 @@ export default function RootLayout() {
             title: 'Add Expense',
           }}
         />
+
+        <Stack.Screen
+          name="expense/[id]"
+          options={{
+            title: 'Edit Expense',
+          }}
+        />
       </Stack>
     </ExpenseProvider>
   );

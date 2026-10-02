@@ -10,6 +10,7 @@ import type { Expense } from '@/types/expense';
 type ExpenseContextType = {
   expenses: Expense[];
   addExpense: (expense: Expense) => void;
+  updateExpense: (expense: Expense) => void;
 };
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(
@@ -26,11 +27,22 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     ]);
   };
 
+  const updateExpense = (updatedExpense: Expense) => {
+    setExpenses((currentExpenses) =>
+      currentExpenses.map((expense) =>
+        expense.id === updatedExpense.id
+          ? updatedExpense
+          : expense
+      )
+    );
+  };
+
   return (
     <ExpenseContext.Provider
       value={{
         expenses,
         addExpense,
+        updateExpense,
       }}
     >
       {children}

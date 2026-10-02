@@ -44,7 +44,11 @@ export default function HomeScreen() {
             </Text>
           ) : (
             expenses.map((expense) => (
-              <View key={expense.id} style={styles.expenseItem}>
+              <Pressable
+                key={expense.id}
+                style={styles.expenseItem}
+                onPress={() => router.push(`/expense/${expense.id}`)}
+              >
                 <View>
                   <Text style={styles.expenseCategory}>
                     {expense.category}
@@ -58,7 +62,7 @@ export default function HomeScreen() {
                 <Text style={styles.expenseAmount}>
                   R$ {expense.amount.toFixed(2)}
                 </Text>
-              </View>
+              </Pressable>
             ))
           )}
         </View>
