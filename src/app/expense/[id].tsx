@@ -27,7 +27,11 @@ const categories = [
 export default function EditExpenseScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const { expenses, updateExpense } = useExpenses();
+  const {
+    expenses,
+    updateExpense,
+    deleteExpense,
+  } = useExpenses();
 
   const existingExpense = expenses.find(
     (expense) => expense.id === id
@@ -50,6 +54,8 @@ export default function EditExpenseScreen() {
   );
 
   const [error, setError] = useState('');
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   if (!existingExpense) {
     return (
@@ -110,6 +116,15 @@ export default function EditExpenseScreen() {
     router.back();
   };
 
+  const handleDelete = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const confirmDelete = () => {
+    deleteExpense(existingExpense.id);
+    router.back();
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -143,7 +158,7 @@ export default function EditExpenseScreen() {
                 style={[
                   styles.categoryButton,
                   category === item &&
-                    styles.categoryButtonSelected,
+                  styles.categoryButtonSelected,
                 ]}
                 onPress={() => setCategory(item)}
               >
@@ -151,7 +166,7 @@ export default function EditExpenseScreen() {
                   style={[
                     styles.categoryButtonText,
                     category === item &&
-                      styles.categoryButtonTextSelected,
+                    styles.categoryButtonTextSelected,
                   ]}
                 >
                   {item}
@@ -195,7 +210,48 @@ export default function EditExpenseScreen() {
             Save Changes
           </Text>
         </Pressable>
+        <Pressable
+          style={styles.deleteButton}
+          onPress={handleDelete}
+        >
+          <Text style={styles.deleteButtonText}>
+            Delete Expense
+          </Text>
+        </Pressable>
       </ScrollView>
+      {showDeleteConfirmation && (
+        <View style={styles.confirmationOverlay}>
+          <View style={styles.confirmationBox}>
+            <Text style={styles.confirmationTitle}>
+              Delete Expense
+            </Text>
+
+            <Text style={styles.confirmationMessage}>
+              Are you sure you want to delete this expense?
+            </Text>
+
+            <View style={styles.confirmationButtons}>
+              <Pressable
+                style={styles.cancelButton}
+                onPress={() => setShowDeleteConfirmation(false)}
+              >
+                <Text style={styles.cancelButtonText}>
+                  Cancel
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.confirmDeleteButton}
+                onPress={confirmDelete}
+              >
+                <Text style={styles.confirmDeleteButtonText}>
+                  Delete
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -310,6 +366,87 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: '#ffffff',
     fontSize: 16,
+    fontWeight: '600',
+  },
+
+  deleteButton: {
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#cc0000',
+  },
+
+  deleteButtonText: {
+    color: '#cc0000',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  confirmationOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+
+  confirmationBox: {
+    width: '100%',
+    maxWidth: 400,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 24,
+  },
+
+  confirmationTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#222222',
+    marginBottom: 12,
+  },
+
+  confirmationMessage: {
+    fontSize: 16,
+    color: '#555555',
+    marginBottom: 24,
+  },
+
+  confirmationButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+
+  cancelButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+  },
+
+  cancelButtonText: {
+    fontSize: 16,
+    color: '#333333',
+    fontWeight: '600',
+  },
+
+  confirmDeleteButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: '#cc0000',
+  },
+
+  confirmDeleteButtonText: {
+    fontSize: 16,
+    color: '#ffffff',
     fontWeight: '600',
   },
 });

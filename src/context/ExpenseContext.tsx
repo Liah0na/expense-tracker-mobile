@@ -11,6 +11,7 @@ type ExpenseContextType = {
   expenses: Expense[];
   addExpense: (expense: Expense) => void;
   updateExpense: (expense: Expense) => void;
+  deleteExpense: (id: string) => void;
 };
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(
@@ -37,12 +38,21 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const deleteExpense = (id: string) => {
+    setExpenses((currentExpenses) =>
+      currentExpenses.filter(
+        (expense) => expense.id !== id
+      )
+    );
+  };
+
   return (
     <ExpenseContext.Provider
       value={{
         expenses,
         addExpense,
         updateExpense,
+        deleteExpense,
       }}
     >
       {children}
