@@ -7,14 +7,23 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { categories } from '@/constants/categories';
 import { useExpenses } from '@/context/ExpenseContext';
+import { useState } from 'react';
 
 export default function HomeScreen() {
   const { expenses } = useExpenses();
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const totalSpent = expenses.reduce(
     (total, expense) => total + expense.amount,
     0
   );
+  const filteredExpenses =
+    selectedCategory === 'All'
+      ? expenses
+      : expenses.filter(
+        (expense) => expense.category === selectedCategory
+      );
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -36,14 +45,66 @@ export default function HomeScreen() {
         </Pressable>
 
         <View style={styles.expensesSection}>
+          <Text style={styles.filterTitle}>
+            Filter by Category
+          </Text>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterContainer}
+          >
+            <Pressable
+              style={[
+                styles.filterButton,
+                selectedCategory === 'All' &&
+                styles.filterButtonSelected,
+              ]}
+              onPress={() => setSelectedCategory('All')}
+            >
+              <Text
+                style={[
+                  styles.filterButtonText,
+                  selectedCategory === 'All' &&
+                  styles.filterButtonTextSelected,
+                ]}
+              >
+                All
+              </Text>
+            </Pressable>
+
+            {categories.map((item) => (
+              <Pressable
+                key={item}
+                style={[
+                  styles.filterButton,
+                  selectedCategory === item &&
+                  styles.filterButtonSelected,
+                ]}
+                onPress={() => setSelectedCategory(item)}
+              >
+                <Text
+                  style={[
+                    styles.filterButtonText,
+                    selectedCategory === item &&
+                    styles.filterButtonTextSelected,
+                  ]}
+                >
+                  {item}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
           <Text style={styles.sectionTitle}>Recent Expenses</Text>
 
-          {expenses.length === 0 ? (
+          {filteredExpenses.length === 0 ? (
             <Text style={styles.emptyMessage}>
-              No expenses yet.
+              {expenses.length === 0
+                ? 'No expenses yet.'
+                : 'No expenses found for this category.'}
             </Text>
           ) : (
-            expenses.map((expense) => (
+            filteredExpenses.map((expense) => (
               <Pressable
                 key={expense.id}
                 style={styles.expenseItem}
@@ -166,5 +227,40 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     color: '#222222',
+  },
+
+  filterTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#222222',
+    marginBottom: 12,
+  },
+
+  filterContainer: {
+    gap: 10,
+    paddingBottom: 20,
+  },
+
+  filterButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#cccccc',
+    borderRadius: 20,
+  },
+
+  filterButtonSelected: {
+    backgroundColor: '#222222',
+    borderColor: '#222222',
+  },
+
+  filterButtonText: {
+    fontSize: 15,
+    color: '#333333',
+  },
+
+  filterButtonTextSelected: {
+    color: '#ffffff',
+    fontWeight: '600',
   },
 });

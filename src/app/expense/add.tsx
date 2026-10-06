@@ -11,16 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Expense } from '@/types/expense';
 import { useExpenses } from '@/context/ExpenseContext';
-
-const categories = [
-  'Food',
-  'Transportation',
-  'Shopping',
-  'Bills',
-  'Entertainment',
-  'Health',
-  'Other',
-];
+import { categories } from '@/constants/categories';
 
 export default function AddExpenseScreen() {
   const [amount, setAmount] = useState('');

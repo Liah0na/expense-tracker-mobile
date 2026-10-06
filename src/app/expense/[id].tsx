@@ -13,16 +13,7 @@ import {
 
 import { useExpenses } from '@/context/ExpenseContext';
 import type { Expense } from '@/types/expense';
-
-const categories = [
-  'Food',
-  'Transportation',
-  'Shopping',
-  'Bills',
-  'Entertainment',
-  'Health',
-  'Other',
-];
+import { categories } from '@/constants/categories';
 
 export default function EditExpenseScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
