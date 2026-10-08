@@ -1,11 +1,14 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from 'react';
-
 import type { Expense } from '@/types/expense';
+
+const EXPENSES_STORAGE_KEY = '@expense_tracker/expenses';
 
 type ExpenseContextType = {
   expenses: Expense[];
@@ -20,6 +23,48 @@ const ExpenseContext = createContext<ExpenseContextType | undefined>(
 
 export function ExpenseProvider({ children }: { children: ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  useEffect(() => {
+    const loadExpenses = async () => {
+      try {
+        const storedExpenses = await AsyncStorage.getItem(
+          EXPENSES_STORAGE_KEY
+        );
+
+        if (storedExpenses) {
+          const parsedExpenses: Expense[] =
+            JSON.parse(storedExpenses);
+
+          setExpenses(parsedExpenses);
+        }
+      } catch (error) {
+        console.error(
+          'Failed to load expenses:',
+          error
+        );
+      }
+    };
+
+    loadExpenses();
+  }, []);
+
+  useEffect(() => {
+    const saveExpenses = async () => {
+      try {
+        await AsyncStorage.setItem(
+          EXPENSES_STORAGE_KEY,
+          JSON.stringify(expenses)
+        );
+      } catch (error) {
+        console.error(
+          'Failed to save expenses:',
+          error
+        );
+      }
+    };
+
+    saveExpenses();
+  }, [expenses]);
 
   const addExpense = (expense: Expense) => {
     setExpenses((currentExpenses) => [
