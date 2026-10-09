@@ -14,6 +14,7 @@ import { useState } from 'react';
 export default function HomeScreen() {
   const { expenses } = useExpenses();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [showSummary, setShowSummary] = useState(true);
   const totalSpent = expenses.reduce(
     (total, expense) => total + expense.amount,
     0
@@ -55,41 +56,58 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.categorySummaryCard}>
-          <Text style={styles.categorySummaryTitle}>
-            Expense Summary
-          </Text>
 
-          {categorySummary.length === 0 ? (
-            <Text style={styles.emptyMessage}>
-              Add an expense to see your summary.
+          <Pressable
+            style={styles.summaryToggle}
+            onPress={() => setShowSummary((visible) => !visible)}
+            accessibilityRole="button"
+            accessibilityLabel={
+              showSummary ? 'Hide expense summary' : 'Show expense summary'
+            }
+            accessibilityState={{ expanded: showSummary }}
+          >
+            <Text style={styles.categorySummaryTitle}>
+              Expense Summary
             </Text>
-          ) : (
-            categorySummary.map((item) => (
-              <View key={item.category} style={styles.categorySummaryItem}>
-                <View style={styles.categorySummaryHeader}>
-                  <Text style={styles.expenseCategory}>
-                    {item.category}
-                  </Text>
 
-                  <Text style={styles.categorySummaryAmount}>
-                    R$ {item.amount.toFixed(2)}
+            <Text style={styles.summaryToggleText}>
+              {showSummary ? 'Hide −' : 'Show +'}
+            </Text>
+          </Pressable>
+
+          {showSummary && (
+            categorySummary.length === 0 ? (
+              <Text style={styles.emptyMessage}>
+                Add an expense to see your summary.
+              </Text>
+            ) : (
+              categorySummary.map((item) => (
+                <View key={item.category} style={styles.categorySummaryItem}>
+                  <View style={styles.categorySummaryHeader}>
+                    <Text style={styles.expenseCategory}>
+                      {item.category}
+                    </Text>
+
+                    <Text style={styles.categorySummaryAmount}>
+                      R$ {item.amount.toFixed(2)}
+                    </Text>
+                  </View>
+
+                  <View style={styles.progressBar}>
+                    <View
+                      style={[
+                        styles.progressFill,
+                        { width: `${item.percentage}%` },
+                      ]}
+                    />
+                  </View>
+
+                  <Text style={styles.categoryPercentage}>
+                    {item.percentage.toFixed(1)}% of total
                   </Text>
                 </View>
-
-                <View style={styles.progressBar}>
-                  <View
-                    style={[
-                      styles.progressFill,
-                      { width: `${item.percentage}%` },
-                    ]}
-                  />
-                </View>
-
-                <Text style={styles.categoryPercentage}>
-                  {item.percentage.toFixed(1)}% of total
-                </Text>
-              </View>
-            ))
+              ))
+            )
           )}
         </View>
 
@@ -373,4 +391,16 @@ const styles = StyleSheet.create({
     color: '#666666',
   },
 
+  summaryToggle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+
+  summaryToggleText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3977D5',
+  },
 });
