@@ -18,6 +18,23 @@ export default function HomeScreen() {
     (total, expense) => total + expense.amount,
     0
   );
+
+  const categorySummary = categories
+    .map((category) => {
+      const amount = expenses
+        .filter((expense) => expense.category === category)
+        .reduce((total, expense) => total + expense.amount, 0);
+
+      return {
+        category,
+        amount,
+        percentage:
+          totalSpent > 0 ? (amount / totalSpent) * 100 : 0,
+      };
+    })
+    .filter((item) => item.amount > 0)
+    .sort((a, b) => b.amount - a.amount);
+
   const filteredExpenses =
     selectedCategory === 'All'
       ? expenses
@@ -35,6 +52,45 @@ export default function HomeScreen() {
           <Text style={styles.total}>
             R$ {totalSpent.toFixed(2)}
           </Text>
+        </View>
+
+        <View style={styles.categorySummaryCard}>
+          <Text style={styles.categorySummaryTitle}>
+            Expense Summary
+          </Text>
+
+          {categorySummary.length === 0 ? (
+            <Text style={styles.emptyMessage}>
+              Add an expense to see your summary.
+            </Text>
+          ) : (
+            categorySummary.map((item) => (
+              <View key={item.category} style={styles.categorySummaryItem}>
+                <View style={styles.categorySummaryHeader}>
+                  <Text style={styles.expenseCategory}>
+                    {item.category}
+                  </Text>
+
+                  <Text style={styles.categorySummaryAmount}>
+                    R$ {item.amount.toFixed(2)}
+                  </Text>
+                </View>
+
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${item.percentage}%` },
+                    ]}
+                  />
+                </View>
+
+                <Text style={styles.categoryPercentage}>
+                  {item.percentage.toFixed(1)}% of total
+                </Text>
+              </View>
+            ))
+          )}
         </View>
 
         <Pressable
@@ -263,4 +319,58 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '600',
   },
+
+
+  categorySummaryCard: {
+    padding: 20,
+    borderRadius: 16,
+    backgroundColor: '#f7f7f7',
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+  },
+
+  categorySummaryTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#222222',
+    marginBottom: 20,
+  },
+
+  categorySummaryItem: {
+    marginBottom: 20,
+  },
+
+  categorySummaryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  categorySummaryAmount: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#222222',
+  },
+
+  progressBar: {
+    height: 8,
+    backgroundColor: '#dddddd',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#3977D5',
+    borderRadius: 4,
+  },
+
+  categoryPercentage: {
+    marginTop: 6,
+    fontSize: 13,
+    color: '#666666',
+  },
+
 });

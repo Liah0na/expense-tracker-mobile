@@ -23,7 +23,9 @@ const ExpenseContext = createContext<ExpenseContextType | undefined>(
 
 export function ExpenseProvider({ children }: { children: ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Load expenses from local storage
   useEffect(() => {
     const loadExpenses = async () => {
       try {
@@ -31,24 +33,32 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
           EXPENSES_STORAGE_KEY
         );
 
-        if (storedExpenses) {
+        if (storedExpenses !== null) {
           const parsedExpenses: Expense[] =
             JSON.parse(storedExpenses);
 
+          if (!Array.isArray(parsedExpenses)) {
+            throw new Error('Stored expenses must be an array.');
+          }
+
           setExpenses(parsedExpenses);
         }
+
+        setIsLoaded(true);
       } catch (error) {
-        console.error(
-          'Failed to load expenses:',
-          error
-        );
+        console.error('Failed to load expenses:', error);
       }
     };
 
     loadExpenses();
   }, []);
 
+  // Save expenses after the initial load completes
   useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
     const saveExpenses = async () => {
       try {
         await AsyncStorage.setItem(
@@ -56,15 +66,12 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
           JSON.stringify(expenses)
         );
       } catch (error) {
-        console.error(
-          'Failed to save expenses:',
-          error
-        );
+        console.error('Failed to save expenses:', error);
       }
     };
 
     saveExpenses();
-  }, [expenses]);
+  }, [expenses, isLoaded]);
 
   const addExpense = (expense: Expense) => {
     setExpenses((currentExpenses) => [
