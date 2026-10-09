@@ -16,7 +16,13 @@ import { categories } from '@/constants/categories';
 export default function AddExpenseScreen() {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
-  const [date, setDate] = useState('');
+  const today = new Date();
+  const localDate = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0'),
+  ].join('-');
+  const [date, setDate] = useState(localDate);
   const [description, setDescription] = useState('');
   const [error, setError] = useState('');
   const { addExpense } = useExpenses();
